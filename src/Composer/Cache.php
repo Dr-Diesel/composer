@@ -60,10 +60,12 @@ class Cache
         return $this->root;
     }
 
-    public function read($file)
+    public function read($file, $ttl = 0)
     {
         $file = preg_replace('{[^'.$this->whitelist.']}i', '-', $file);
         if ($this->enabled && file_exists($this->root . $file)) {
+        	if ($ttl and filemtime($this->root . $file)<(time()-$ttl))
+        		return false;
             if ($this->io->isDebug()) {
                 $this->io->write('Reading '.$this->root . $file.' from cache');
             }

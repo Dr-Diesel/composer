@@ -404,7 +404,11 @@ class ComposerRepository extends ArrayRepository
             $jsonUrl = $this->url . '/packages.json';
         }
 
-        $data = $this->fetchFile($jsonUrl, 'packages.json');
+        //TODO --force-update
+        if ($cdata = $this->cache->read('packages.json', 60*60))
+        	$data = json_decode($cdata,true);
+        else
+        	$data = $this->fetchFile($jsonUrl, 'packages.json');
 
         if (!empty($data['notify-batch'])) {
             $this->notifyUrl = $this->canonicalizeUrl($data['notify-batch']);
